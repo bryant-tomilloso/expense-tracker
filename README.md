@@ -1,6 +1,6 @@
 # Expense Tracker
 
-A full-stack personal finance app for logging income and expenses, tracking your balance, and exporting reports for any date range.
+A full-stack personal finance app for logging income and expenses, tracking your balance, exporting reports for any date range, and editing transactions.
 
 ## Features
 
