@@ -1,0 +1,185 @@
+* { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  padding: 2rem 1rem;
+  color: #1f2933;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.card {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.card span {
+  display: block;
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+.card strong {
+  font-size: 1.2rem;
+}
+
+.card.income strong { color: #16a34a; }
+.card.expense strong { color: #dc2626; }
+.card.balance strong { color: #2563eb; }
+
+form {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+form input, form select, form button {
+  padding: 0.6rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+form button {
+  grid-column: span 2;
+  background: #2563eb;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+form button:hover { background: #1d4ed8; }
+
+.table-wrapper {
+  max-height: 400px;       /* change this to make it taller or shorter */
+  overflow-y: auto;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+/* replace your existing table rule with this */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+th, td {
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* replace your existing th rule with this */
+th {
+  background: #f9fafb;
+  color: #6b7280;
+  font-weight: 600;
+  position: sticky;   /* keeps the header visible while scrolling */
+  top: 0;
+}
+
+td.amount-income { color: #16a34a; font-weight: 600; }
+td.amount-expense { color: #dc2626; font-weight: 600; }
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.delete-btn:hover { color: #dc2626; }
+
+@media (max-width: 480px) {
+  .summary { grid-template-columns: 1fr; }
+  form { grid-template-columns: 1fr; }
+  form button { grid-column: span 1; }
+}
+
+.export-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.export-dates {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.export-dates label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.export-dates input {
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+}
+
+.export-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.export-buttons button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: #16a34a;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.export-buttons button:hover {
+  background: #15803d;
+}

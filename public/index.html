@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Expense Tracker</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>💰 Expense Tracker</h1>
+
+    <div class="summary">
+      <div class="card income">
+        <span>Total Income</span>
+        <strong id="totalIncome">₱0</strong>
+      </div>
+      <div class="card expense">
+        <span>Total Expense</span>
+        <strong id="totalExpense">₱0</strong>
+      </div>
+      <div class="card balance">
+        <span>Balance</span>
+        <strong id="balance">₱0</strong>
+      </div>
+    </div>
+
+    <form id="transactionForm">
+      <input type="number" id="amount" placeholder="Amount" step="0.01" required />
+      <select id="type" required>
+        <option value="income">Income</option>
+        <option value="expense">Expense</option>
+      </select>
+      <select id="category" required>
+        <option value="Salary">Salary</option>
+        <option value="Food">Food</option>
+        <option value="Transport">Transport</option>
+        <option value="Rent">Rent</option>
+        <option value="Utilities">Utilities</option>
+        <option value="Entertainment">Entertainment</option>
+        <option value="Other">Other</option>
+      </select>
+      <input type="text" id="description" placeholder="Description (optional)" />
+      <input type="date" id="date" required />
+      <button type="submit">Add Transaction</button>
+    </form>
+
+    <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Category</th>
+          <th>Description</th>
+          <th>Type</th>
+          <th>Amount</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="transactionList"></tbody>
+    </table>
+  </div>
+
+
+  
+  <div class="export-bar">
+  <div class="export-dates">
+    <label>From <input type="date" id="exportFrom" /></label>
+    <label>To <input type="date" id="exportTo" /></label>
+  </div>
+  <div class="export-buttons">
+    <button type="button" id="exportExcel">Export Excel</button>
+    <button type="button" id="exportPdf">Export PDF</button>
+  </div>
+</div>
+
+  <script src="app.js"></script>
+</body>
+</html>
