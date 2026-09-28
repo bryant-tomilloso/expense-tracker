@@ -5,17 +5,67 @@ const listEl = document.getElementById('transactionList');
 
 document.getElementById('date').valueAsDate = new Date();
 
+// ---------- Filters ----------
+const filterMonth = document.getElementById('filterMonth');
+const filterCategory = document.getElementById('filterCategory');
+const filterType = document.getElementById('filterType');
+
+// Fill the category filter from the form's own category list (stays in sync)
+document.querySelectorAll('#category option').forEach((opt) => {
+  filterCategory.add(new Option(opt.textContent, opt.value));
+});
+
+// Turns the current filter values into "?month=2026-09&category=Food"
+function getFilterQuery() {
+  const params = new URLSearchParams();
+  if (filterMonth.value) params.set('month', filterMonth.value);
+  if (filterCategory.value) params.set('category', filterCategory.value);
+  if (filterType.value) params.set('type', filterType.value);
+  const qs = params.toString();
+  return qs ? `?${qs}` : '';
+}
+
+function refresh() {
+  loadTransactions();
+  loadSummary();
+}
+
+[filterMonth, filterCategory, filterType].forEach((el) =>
+  el.addEventListener('change', refresh)
+);
+
+document.getElementById('clearFilters').addEventListener('click', () => {
+  filterMonth.value = '';
+  filterCategory.value = '';
+  filterType.value = '';
+  refresh();
+});
+
+// Prevents description text like "<b>hi</b>" from being treated as HTML
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// ---------- Replaces your old loadTransactions ----------
 async function loadTransactions() {
-  const res = await fetch(`${API_URL}/transactions`);
+  const res = await fetch(`${API_URL}/transactions${getFilterQuery()}`);
   const transactions = await res.json();
 
   listEl.innerHTML = '';
+
+  if (transactions.length === 0) {
+    listEl.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#9ca3af;">No transactions found</td></tr>';
+    return;
+  }
+
   transactions.forEach((t) => {
     const row = document.createElement('tr');
     row.innerHTML = `
       <td>${t.date}</td>
-      <td>${t.category}</td>
-      <td>${t.description || '-'}</td>
+      <td>${escapeHtml(t.category)}</td>
+      <td>${t.description ? escapeHtml(t.description) : '-'}</td>
       <td>${t.type}</td>
       <td class="amount-${t.type}">${t.type === 'expense' ? '-' : '+'}₱${t.amount.toFixed(2)}</td>
       <td><button class="delete-btn" data-id="${t.id}">✕</button></td>
@@ -26,14 +76,14 @@ async function loadTransactions() {
   document.querySelectorAll('.delete-btn').forEach((btn) => {
     btn.addEventListener('click', async () => {
       await fetch(`${API_URL}/transactions/${btn.dataset.id}`, { method: 'DELETE' });
-      loadTransactions();
-      loadSummary();
+      refresh();
     });
   });
 }
 
+// ---------- Replaces your old loadSummary ----------
 async function loadSummary() {
-  const res = await fetch(`${API_URL}/summary`);
+  const res = await fetch(`${API_URL}/summary${getFilterQuery()}`);
   const summary = await res.json();
 
   document.getElementById('totalIncome').textContent = `₱${summary.totalIncome.toFixed(2)}`;

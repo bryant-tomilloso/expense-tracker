@@ -45,6 +45,23 @@
       <button type="submit">Add Transaction</button>
     </form>
 
+    <div class="filter-bar">
+  <label>Month <input type="month" id="filterMonth" /></label>
+  <label>Category
+    <select id="filterCategory">
+      <option value="">All</option>
+    </select>
+  </label>
+  <label>Type
+    <select id="filterType">
+      <option value="">All</option>
+      <option value="income">Income</option>
+      <option value="expense">Expense</option>
+    </select>
+  </label>
+  <button type="button" id="clearFilters">Clear</button>
+</div>
+
     <div class="table-wrapper">
     <table>
       <thead>
@@ -62,7 +79,7 @@
   </div>
 
 
-  
+
   <div class="export-bar">
   <div class="export-dates">
     <label>From <input type="date" id="exportFrom" /></label>

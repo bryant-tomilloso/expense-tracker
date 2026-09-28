@@ -31,22 +31,52 @@ db.run(`
 
 // --- Routes ---
 
-// GET all transactions (newest first)
+// Build a WHERE clause from optional ?month=YYYY-MM&category=Food&type=expense
+function buildFilters(query) {
+  const conditions = [];
+  const params = [];
+
+  if (/^\d{4}-\d{2}$/.test(query.month || '')) {
+    conditions.push('substr(date, 1, 7) = ?');
+    params.push(query.month);
+  }
+  if (query.category) {
+    conditions.push('category = ?');
+    params.push(query.category);
+  }
+  if (['income', 'expense'].includes(query.type)) {
+    conditions.push('type = ?');
+    params.push(query.type);
+  }
+
+  return {
+    where: conditions.length ? 'WHERE ' + conditions.join(' AND ') : '',
+    params
+  };
+}
+
+// GET transactions (newest first), optionally filtered
 app.get('/transactions', (req, res) => {
-  db.all('SELECT * FROM transactions ORDER BY date DESC, id DESC', [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-  });
+  const { where, params } = buildFilters(req.query);
+  db.all(
+    `SELECT * FROM transactions ${where} ORDER BY date DESC, id DESC`,
+    params,
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json(rows);
+    }
+  );
 });
 
-// GET summary (total income, total expenses, balance)
+// GET summary (total income, total expenses, balance), optionally filtered
 app.get('/summary', (req, res) => {
+  const { where, params } = buildFilters(req.query);
   db.get(
     `SELECT
       COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) as totalIncome,
       COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) as totalExpense
-    FROM transactions`,
-    [],
+    FROM transactions ${where}`,
+    params,
     (err, row) => {
       if (err) return res.status(500).json({ error: err.message });
       res.json({
