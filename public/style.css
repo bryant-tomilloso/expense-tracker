@@ -218,3 +218,15 @@ td.amount-expense { color: #dc2626; font-weight: 600; }
   background: white;
   cursor: pointer;
 }
+
+.edit-btn {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+.edit-btn:hover { color: #2563eb; }
+
+#cancelEdit { background: #e5e7eb; color: #374151; }
+#cancelEdit:hover { background: #d1d5db; }

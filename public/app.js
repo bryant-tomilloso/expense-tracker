@@ -52,6 +52,7 @@ function escapeHtml(text) {
 async function loadTransactions() {
   const res = await fetch(`${API_URL}/transactions${getFilterQuery()}`);
   const transactions = await res.json();
+  currentTransactions = transactions;
 
   listEl.innerHTML = '';
 
@@ -68,14 +69,22 @@ async function loadTransactions() {
       <td>${t.description ? escapeHtml(t.description) : '-'}</td>
       <td>${t.type}</td>
       <td class="amount-${t.type}">${t.type === 'expense' ? '-' : '+'}₱${t.amount.toFixed(2)}</td>
-      <td><button class="delete-btn" data-id="${t.id}">✕</button></td>
+      <td>
+        <button class="edit-btn" data-id="${t.id}" title="Edit">✎</button>
+        <button class="delete-btn" data-id="${t.id}" title="Delete">✕</button>
+      </td>
     `;
     listEl.appendChild(row);
+  });
+
+  document.querySelectorAll('.edit-btn').forEach((btn) => {
+    btn.addEventListener('click', () => startEdit(Number(btn.dataset.id)));
   });
 
   document.querySelectorAll('.delete-btn').forEach((btn) => {
     btn.addEventListener('click', async () => {
       await fetch(`${API_URL}/transactions/${btn.dataset.id}`, { method: 'DELETE' });
+      if (editingId === Number(btn.dataset.id)) resetForm();
       refresh();
     });
   });
@@ -91,6 +100,36 @@ async function loadSummary() {
   document.getElementById('balance').textContent = `₱${summary.balance.toFixed(2)}`;
 }
 
+// ---------- Edit support ----------
+let currentTransactions = [];
+let editingId = null;
+const submitBtn = form.querySelector('button[type="submit"]');
+const cancelBtn = document.getElementById('cancelEdit');
+
+function resetForm() {
+  editingId = null;
+  form.reset();
+  document.getElementById('date').valueAsDate = new Date();
+  submitBtn.textContent = 'Add Transaction';
+  cancelBtn.style.display = 'none';
+}
+
+function startEdit(id) {
+  const t = currentTransactions.find((x) => x.id === id);
+  if (!t) return;
+  editingId = t.id;
+  document.getElementById('amount').value = t.amount;
+  document.getElementById('type').value = t.type;
+  document.getElementById('category').value = t.category;
+  document.getElementById('description').value = t.description || '';
+  document.getElementById('date').value = t.date;
+  submitBtn.textContent = 'Save Changes';
+  cancelBtn.style.display = 'block';
+  form.scrollIntoView({ behavior: 'smooth' });
+}
+
+cancelBtn.addEventListener('click', resetForm);
+
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -102,16 +141,23 @@ form.addEventListener('submit', async (e) => {
     date: document.getElementById('date').value
   };
 
-  await fetch(`${API_URL}/transactions`, {
-    method: 'POST',
+  const url = editingId
+    ? `${API_URL}/transactions/${editingId}`
+    : `${API_URL}/transactions`;
+
+  const res = await fetch(url, {
+    method: editingId ? 'PUT' : 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
   });
 
-  form.reset();
-  document.getElementById('date').valueAsDate = new Date();
-  loadTransactions();
-  loadSummary();
+  if (!res.ok) {
+    const err = await res.json();
+    return alert(err.error || 'Something went wrong');
+  }
+
+  resetForm();
+  refresh();
 });
 
 function exportRange(format) {

@@ -109,6 +109,28 @@ app.post('/transactions', (req, res) => {
   );
 });
 
+// PUT (edit) an existing transaction
+app.put('/transactions/:id', (req, res) => {
+  const { amount, type, category, description, date } = req.body;
+
+  if (!amount || !type || !category || !date) {
+    return res.status(400).json({ error: 'amount, type, category, and date are required' });
+  }
+  if (!['income', 'expense'].includes(type)) {
+    return res.status(400).json({ error: 'type must be "income" or "expense"' });
+  }
+
+  db.run(
+    'UPDATE transactions SET amount = ?, type = ?, category = ?, description = ?, date = ? WHERE id = ?',
+    [amount, type, category, description || '', date, req.params.id],
+    function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+      if (this.changes === 0) return res.status(404).json({ error: 'Transaction not found' });
+      res.json({ id: Number(req.params.id), amount, type, category, description, date });
+    }
+  );
+});
+
 // DELETE a transaction
 app.delete('/transactions/:id', (req, res) => {
   db.run('DELETE FROM transactions WHERE id = ?', [req.params.id], function (err) {
