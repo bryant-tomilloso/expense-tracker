@@ -230,3 +230,63 @@ td.amount-expense { color: #dc2626; font-weight: 600; }
 
 #cancelEdit { background: #e5e7eb; color: #374151; }
 #cancelEdit:hover { background: #d1d5db; }
+
+.reports-section {
+  margin-top: 2rem;
+}
+
+.reports-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.reports-header h2 { margin: 0; }
+
+.reports-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.card h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.95rem;
+}
+
+.top-cat-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0;
+  font-size: 0.85rem;
+}
+
+.top-cat-name { width: 90px; }
+.top-cat-amount { width: 90px; text-align: right; }
+
+.top-cat-bar-track {
+  flex: 1;
+  height: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.top-cat-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+}
+
+@media (max-width: 640px) {
+  .reports-grid { grid-template-columns: 1fr; }
+}

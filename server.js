@@ -55,6 +55,63 @@ function buildFilters(query) {
   };
 }
 
+// ---------- Reports ----------
+
+// GET /reports/monthly?months=6
+// Returns income & expense totals for the last N months (including the current one)
+app.get('/reports/monthly', (req, res) => {
+  const months = Math.min(Math.max(parseInt(req.query.months) || 6, 1), 24);
+
+  const labels = [];
+  const now = new Date();
+  for (let i = months - 1; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    labels.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+  }
+
+  db.all(
+    `SELECT substr(date, 1, 7) as month,
+      COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) as income,
+      COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) as expense
+    FROM transactions
+    WHERE substr(date, 1, 7) IN (${labels.map(() => '?').join(',')})
+    GROUP BY month`,
+    labels,
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+
+      const byMonth = Object.fromEntries(rows.map((r) => [r.month, r]));
+      const result = labels.map((m) => ({
+        month: m,
+        income: byMonth[m] ? byMonth[m].income : 0,
+        expense: byMonth[m] ? byMonth[m].expense : 0
+      }));
+      res.json(result);
+    }
+  );
+});
+
+// GET /reports/by-category?month=YYYY-MM
+// Returns expense totals grouped by category for one month (defaults to current month)
+app.get('/reports/by-category', (req, res) => {
+  const month = /^\d{4}-\d{2}$/.test(req.query.month || '')
+    ? req.query.month
+    : `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+
+  db.all(
+    `SELECT category, SUM(amount) as total
+    FROM transactions
+    WHERE type = 'expense' AND substr(date, 1, 7) = ?
+    GROUP BY category
+    ORDER BY total DESC`,
+    [month],
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ month, categories: rows });
+    }
+  );
+});
+
 // GET transactions (newest first), optionally filtered
 app.get('/transactions', (req, res) => {
   const { where, params } = buildFilters(req.query);

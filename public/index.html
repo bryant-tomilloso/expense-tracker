@@ -43,12 +43,12 @@
       <input type="text" id="description" placeholder="Description (optional)" />
       <input type="date" id="date" required />
       <button type="submit">Add Transaction</button>
-<button type="button" id="cancelEdit" style="display:none">Cancel</button>
+    <button type="button" id="cancelEdit" style="display:none">Cancel</button>
     </form>
 
     <div class="filter-bar">
-  <label>Month <input type="month" id="filterMonth" /></label>
-  <label>Category
+    <label>Month <input type="month" id="filterMonth" /></label>
+     <label>Category
     <select id="filterCategory">
       <option value="">All</option>
     </select>
@@ -78,6 +78,44 @@
       <tbody id="transactionList"></tbody>
     </table>
   </div>
+  
+  <div class="reports-section">
+  <div class="reports-header">
+    <h2>Reports</h2>
+    <input type="month" id="reportMonth" />
+  </div>
+
+  <div class="summary">
+  <div class="card income">
+    <span>Income</span>
+    <strong id="reportIncome">₱0</strong>
+  </div>
+  <div class="card expense">
+    <span>Expenses</span>
+    <strong id="reportExpense">₱0</strong>
+  </div>
+  <div class="card balance">
+    <span>Balance</span>
+    <strong id="reportBalance">₱0</strong>
+  </div>
+</div>
+
+  <div class="reports-grid">
+    <div class="card chart-card">
+      <h3>Income vs. Expenses</h3>
+      <canvas id="monthlyChart"></canvas>
+    </div>
+    <div class="card chart-card">
+      <h3>By Category</h3>
+      <canvas id="categoryChart"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Top Categories</h3>
+    <div id="topCategoriesList"></div>
+  </div>
+</div>
 
 
 
@@ -89,9 +127,12 @@
   <div class="export-buttons">
     <button type="button" id="exportExcel">Export Excel</button>
     <button type="button" id="exportPdf">Export PDF</button>
+    </div>
   </div>
 </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <script src="app.js"></script>
+  <script src="reports.js"></script>
 </body>
 </html>
